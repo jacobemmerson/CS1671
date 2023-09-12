@@ -17,7 +17,6 @@ import re
 
 def check_for_foo_or_bar(text):
    test = re.split('\W+', text.lower())
-   print(test)
 
    if ('foo' in test) and ('bar') in test:
       return True
@@ -214,3 +213,36 @@ def wine_text_processing(wine_file_path, stopwords_file_path):
       print(f"{v : <3} {k : >5}")
 
    return
+
+foobar_strings = [
+   'foo bar',
+   ' foo.bar',
+   'foobar',
+   'ifoo bari',
+   'bar foo',
+   'bar-foo'
+]
+
+test_strings = [
+    'I like rgb(1,1,1) and rgb(1, 1, 1) and rgb(0.1, 0.5,1.0).',
+    'I like rgb(255,19,32) and rgb(255, 19, 32) and rgb(0.1, 0.5,1.0).',
+    'I like rgb(00,01, 18) and rgb(00, 01, 18) and rgb(0.1, 0.5,1.0).',
+    'I like rgb(0.1, 0.5,1.0) and rgb(0.1, 0.5, 1.0) and rgb(0.1, 0.5,1.0).',
+    'I like #0f0 and #xyzy and #01 and #500fff and #500fff.'
+]
+
+print('check_for_foo_or_bar(text)')
+print('-' * 50)
+for f in foobar_strings:
+   print(f)
+   print(check_for_foo_or_bar(f))
+
+print('\nreplace_rgb(text)')
+print('-' * 50)
+for t in test_strings:
+    print(t)
+    print(replace_rgb(t))
+
+print('\nwine_text_processing(wine_file_path, stop_words_file_path)')
+print('-' * 50)
+wine_text_processing('data/wine.txt', 'data/stopwords.txt')
