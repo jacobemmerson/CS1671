@@ -219,3 +219,16 @@ class NgramModelWithInterpolation(NgramModel):
 
         return p_interp
         
+def __main__():
+    try:
+        print("This script trains a 4-gram model with add-k smoothing where k = 1.")
+        print("For demonstration, this code will generate an n-length amount of random text when trained on the provided data.\n")
+        training_set = input("Path to Training Data (.txt): ")
+        n = input("n = ")
+        m = create_ngram_model(NgramModelWithInterpolation, training_set ,c = 3, k = 1)
+        m.set_lambdas([10,5,2,1])
+        print(m.random_text(int(n)))
+    except:
+        print("Something went wrong, check file path name.")
+
+__main__()
