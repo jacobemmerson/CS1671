@@ -26,10 +26,6 @@ You will be prompted for an input file path for training, and the context length
 
     from ngram_skeleton import *
 
-## Unresolved Issues / Misc. Notes
-
-As noted at the end of the report, the smoothing function allows for probabilities greater than 1 when k > N + |V| - 1
-
 ## Additional Resources
 
 - https://en.wikipedia.org/wiki/Perplexity

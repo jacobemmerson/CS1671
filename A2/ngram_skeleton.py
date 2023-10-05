@@ -99,7 +99,7 @@ class NgramModel(object):
             c = counts[char]
             
         # p(char | context) = counts(context, char)/counts(context)
-        p = (c + k) / (sum(counts.values()) + (0 if k == 0 else v))
+        p = (c + k) / (sum(counts.values()) + (k * v))
 
         return p
 
