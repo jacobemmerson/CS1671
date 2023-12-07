@@ -2,15 +2,16 @@ import pandas as pd
 import numpy as np
 import re # regular expression
 
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC # svm with linear kernel
+from sklearn.linear_model import SGDClassifier # stochastic gradient descent linmod
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 
 from dep import *
 
 class RTE_classifier():
-    def __init__(self, training_answers, window_size = 3):
-        self.win_size = window_size
+    def __init__(self, training_answers, weights = [1,1,1,1,1]):
+        self.lambdas = weights
         self.answers = training_answers
         self.names = set([name.lower() for name in (names.words('male.txt') + names.words('female.txt'))])
 
@@ -24,7 +25,10 @@ class RTE_classifier():
         qtype = []
         align = []
         neg = []
-        
+
+        weights = np.array(self.lambdas, dtype = np.float64)
+        weights /= weights.sum()
+
         train_answers = self.answers
         story_data = text_data
         
@@ -51,7 +55,7 @@ class RTE_classifier():
                         min(td_mat.shape[1]-1, top_index + 1),
                         min(td_mat.shape[1]-1, top_index + 2)
                     ]]
-                    comb = (comb * [0.1, 0.15, 0.5, 0.15, 0.1]).sum(axis = 1)
+                    comb = (comb * weights).sum(axis = 1)
                     cos.append(cosine_sim(comb, convert_question(hyp, vocab)))
 
                     # Sets
@@ -108,17 +112,18 @@ class RTE_classifier():
 
         param_grid = [
             {
-                'C' : np.logspace(-9, 0, num = 10),
-                'penalty' : ['l2'],
-                'loss' : ['squared_hinge'],
-                'dual' : [False],
+                'loss' : ['hinge', 'squared_hinge'],
+                'penalty' : ['elasticnet'],
+                'alpha' : np.logspace(-9,0,num =10), # reg param
+                'l1_ratio' : np.logspace(-9,0,num=10),
                 'max_iter' : [10000],
-                'tol' : [1e-5]
+                'learning_rate' : ['adaptive'],
+                'eta0' : np.logspace(-3,0,num = 10)
             }
         ]
 
         lsvc = GridSearchCV(
-            LinearSVC(),
+            SGDClassifier(),
             param_grid,
             cv = 10,
             scoring = 'accuracy',

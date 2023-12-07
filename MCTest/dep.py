@@ -192,7 +192,7 @@ def preprocess_text(text):
         '0' : 'zero',
     }
 
-    sentence = text.split(': ')[-1].lower() # for questions
+    sentence = str(text).split(': ')[-1].lower() # for questions
     #stemmer = PorterStemmer()
 
     # tokeize
