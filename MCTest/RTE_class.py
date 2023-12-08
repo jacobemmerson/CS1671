@@ -37,6 +37,7 @@ class RTE_classifier():
             passage = preprocess_text(story['story']) # text
             td_mat, vocab = create_td_mat(passage)
             vtoi = dict(zip(vocab, range(len(vocab))))
+
             # convert each question 
             for question in ['q1','q2','q3','q4']:
 
@@ -73,11 +74,9 @@ class RTE_classifier():
 
                     named_ent.append(ne_count)
 
-                    A = []
-                    for sentence in passage.split('.'):
-                        A.append(get_align(hyp, sentence))
-                        
-                    align.append(np.mean(A))
+                    # Alignment
+                    ### Append the alignment of the most similar sentence to the question
+                    align.append(get_align(hyp, re.split('[.!?] ', passage)[top_index]))
             
                     if 'not' in hyp:
                         neg.append(1)

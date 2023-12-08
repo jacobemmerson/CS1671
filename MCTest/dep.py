@@ -157,12 +157,13 @@ def sort_by_column(matrix, col_index, ascending = False):
 def rank_sentences(matrix, question):
     q = question
     mat = matrix
-    ncols = mat.shape[1] # match sentences to the question
+    ncols = mat.shape[1] # sentences
+
 
     for r in range(ncols):
-        s = cosine_sim(q, mat[:,r])
+        s = cosine_sim(q, mat[:,r]) # cosine sim of question to sentence
 
-        if r == 0:
+        if r == 0: # make array on initial pass
             sims = np.array([[r,s]])
 
         else:
