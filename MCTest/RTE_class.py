@@ -39,10 +39,10 @@ class RTE_classifier():
             vtoi = dict(zip(vocab, range(len(vocab))))
             # convert each question 
             for question in ['q1','q2','q3','q4']:
-                hypotheses = create_hypothesis(story[question],story[f'{question}_a'])
 
                 # check each hypothesis against the text
-                for num, hyp in hypotheses.items():
+                for num, hyp in story[f"{question}_a"].items():
+                    hyp = preprocess_text(hyp)
                     hyp_vocab = set(hyp.split(' '))
                     r_index, _ = rank_sentences(td_mat, convert_question(hyp, vocab))
 
@@ -75,7 +75,7 @@ class RTE_classifier():
 
                     A = []
                     for sentence in passage.split('.'):
-                        A.append(get_align(sentence, hyp))
+                        A.append(get_align(hyp, sentence))
                         
                     align.append(np.mean(A))
             
@@ -112,13 +112,13 @@ class RTE_classifier():
 
         param_grid = [
             {
-                'loss' : ['hinge', 'squared_hinge'],
+                'loss' : ['squared_hinge'],
                 'penalty' : ['elasticnet'],
                 'alpha' : np.logspace(-9,0,num =10), # reg param
-                'l1_ratio' : np.logspace(-9,0,num=10),
+                'l1_ratio' : np.logspace(-4,0, num = 5),
                 'max_iter' : [10000],
                 'learning_rate' : ['adaptive'],
-                'eta0' : np.logspace(-3,0,num = 10)
+                'eta0' : np.logspace(-4,0,num = 5) # learning rate
             }
         ]
 

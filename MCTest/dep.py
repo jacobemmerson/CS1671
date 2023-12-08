@@ -84,10 +84,9 @@ def get_align(sentence1, sentence2):
 
         for j in range(m):
             if s2[j] == w:
-                A += abs(j - i)
+                A += 1/((abs(j - i) + 1)**2)
 
-    return 1/((A+1)**2)
-
+    return A
 def create_td_mat(story):
     sentences = re.split('[.!?] ', story)
     vocab = set(re.split('[.!?] | ', story.lower())) # different vocab for each story to prevent matrix from getting too sparse (and save memory)
@@ -174,11 +173,13 @@ def rank_sentences(matrix, question):
     return sims[:,0].astype(np.int32), sims[:,1]
 
 def preprocess_text(text):
+
     stop_words = set(
         [
             "'s", ",", "?", "who", "what", "why", "when", "did", "where", "but", "however", "..."
         ]
     )
+
     num_to_word = {
         '1' : 'one',
         '2' : 'two',
@@ -199,23 +200,10 @@ def preprocess_text(text):
     tokens = word_tokenize(sentence)
     #tokens = [token for token in tokens if token.lower() not in questions]
     tokens = [lemmatize(token) if token not in num_to_word else num_to_word[token] for token in tokens]
-
     tokens = [token for token in tokens if token.lower() not in stop_words]
 
     # return string
     return ' '.join(tokens)
-
-def create_hypothesis(question, candidate_answers):
-    # Preprocess question and candidate answer
-    processed_question = preprocess_text(question)
-
-    hyp = {}
-    for num,answer in candidate_answers.items():
-        processed_answer = preprocess_text(answer)
-        hyp[num] = f'{processed_question} {processed_answer}'
-    
-    # Formulate hypothesis
-    return hyp
 
 def get_accuracy(pred_df, answer_df):
 
